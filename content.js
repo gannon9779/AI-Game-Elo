@@ -3,15 +3,15 @@
 function extractConversation() {
   const messageNodes = document.querySelectorAll('[data-message-author-role]');
   let conversation = [];
-  
+
   messageNodes.forEach(node => {
     const role = node.getAttribute('data-message-author-role');
     if (role === 'user' || role === 'assistant') {
       const text = node.innerText || "";
       if (text.trim().length > 0) {
-        conversation.push({ 
-          role: role === 'user' ? 'Human' : 'AI', 
-          text: text.substring(0, 2500).trim() 
+        conversation.push({
+          role: role === 'user' ? 'Human' : 'AI',
+          text: text.substring(0, 2500).trim()
         });
       }
     }
@@ -36,26 +36,43 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 async function runBatchAnalysis() {
-  const log = (msg, done=false, status=null) => {
+  const log = (msg, done = false, status = null) => {
     chrome.runtime.sendMessage({ action: "batchProgressUpdate", log: msg, done, status });
   };
 
   try {
+    log("Fetching /api/auth/session...", false, "Authenticating...");
+    let accessToken = null;
+    try {
+      const sessionRes = await fetch('/api/auth/session');
+      if (sessionRes.ok) {
+        const sessionData = await sessionRes.json();
+        accessToken = sessionData.accessToken;
+      }
+    } catch(e) {
+      log("Warning: Failed to fetch auth session", false, "Auth Warning");
+    }
+
     log("Fetching /backend-api/conversations...", false, "Fetching history...");
-    const res = await fetch('/backend-api/conversations?offset=0&limit=50');
-    if (!res.ok) throw new Error("Failed to fetch conversation history");
-    
+    const headers = {};
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const res = await fetch('/backend-api/conversations?offset=0&limit=50', { headers });
+    if (!res.ok) throw new Error(`Failed to fetch conversation history: ${res.status}`);
+
     const data = await res.json();
     let items = data.items;
-    
+
     if (!items || items.length === 0) {
-      log("No chats found.", true, "Complete");
+      log(`No chats found. Debug data: ${JSON.stringify(data).substring(0, 300)}`, true, "Complete");
       return;
     }
 
     // Process from oldest to newest! So reverse the array (since API returns newest first)
     items.reverse();
-    
+
     log(`Found ${items.length} chats. Starting sequential analysis...`, false, "Analyzing...");
 
     for (let i = 0; i < items.length; i++) {
@@ -63,23 +80,23 @@ async function runBatchAnalysis() {
       const chatId = chatInfo.id;
       const chatUrl = `/c/${chatId}`;
       const title = chatInfo.title || "Untitled";
-      
-      log(`\n[${i+1}/${items.length}] Checking: ${title} (${chatUrl})`);
+
+      log(`\n[${i + 1}/${items.length}] Checking: ${title} (${chatUrl})`);
 
       // 1. Fetch convo JSON
-      const cRes = await fetch(`/backend-api/conversation/${chatId}`);
+      const cRes = await fetch(`/backend-api/conversation/${chatId}`, { headers });
       if (!cRes.ok) {
         log(`Failed to fetch chat contents. Skipping.`);
         continue;
       }
-      
+
       const cData = await cRes.json();
       let conversation = [];
-      
+
       if (cData.mapping) {
         let nodes = Object.values(cData.mapping);
         // Sort by create_time
-        nodes.sort((a,b) => {
+        nodes.sort((a, b) => {
           let ta = a.message?.create_time || 0;
           let tb = b.message?.create_time || 0;
           return ta - tb;
@@ -93,7 +110,7 @@ async function runBatchAnalysis() {
             if (parts && parts.length > 0) {
               let text = (typeof parts[0] === 'string') ? parts[0] : JSON.stringify(parts[0]);
               if (text && text.trim().length > 0) {
-                conversation.push({ role: role === 'user' ? 'Human' : 'AI', text: text.substring(0,2500).trim() });
+                conversation.push({ role: role === 'user' ? 'Human' : 'AI', text: text.substring(0, 2500).trim() });
               }
             }
           }
@@ -129,14 +146,14 @@ async function runBatchAnalysis() {
           log(`Success: ${bgRes.data.outcome} (${bgRes.data.eloDiff > 0 ? '+' : ''}${bgRes.data.eloDiff} Elo)`);
           analyzed = true;
           // Small buffer to respect normal rate limits
-          await new Promise(r => setTimeout(r, 1000)); 
+          await new Promise(r => setTimeout(r, 1000));
         }
       }
     }
 
     log(`Batch complete!`, true, "Done!");
 
-  } catch(err) {
+  } catch (err) {
     log(`Fatal Error: ${err.message}`, true, "Error");
   }
 }
@@ -149,7 +166,7 @@ function injectAnalyzeButton() {
   const btn = document.createElement('button');
   btn.id = 'ai-game-elo-btn';
   btn.innerText = 'Analyze Chat ELO';
-  
+
   // Styling
   Object.assign(btn.style, {
     position: 'fixed',
@@ -174,7 +191,7 @@ function injectAnalyzeButton() {
   btn.onmouseout = () => { btn.style.backgroundColor = '#2C2C2E'; btn.style.opacity = '0.9'; };
 
   btn.addEventListener('click', handleAnalyzeClick);
-  
+
   document.body.appendChild(btn);
 }
 
@@ -228,7 +245,7 @@ async function handleAnalyzeClick(e) {
       // Success Display based on outcome
       const outcome = response.data.outcome;
       const eloDiff = response.data.eloDiff;
-      
+
       if (outcome === 'Win') {
         btn.innerText = `Win +${Math.abs(eloDiff)} Elo!`;
         btn.style.backgroundColor = '#388E3C'; // green success
