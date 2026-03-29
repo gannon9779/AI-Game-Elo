@@ -146,13 +146,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- UI & GRAPH LOGIC ---
   function getRankDetails(elo) {
-    if (elo < 1000) return { name: 'Spud', class: 'spud', color: '#8b5a2b' };
-    if (elo < 1100) return { name: 'Chud', class: 'chud', color: '#cd7f32' };
+    if (elo < 1000) return { name: 'Absolute Chud', class: 'absolute-chud', color: '#8b5a2b' };
+    if (elo < 1100) return { name: 'Bottom-Feeder', class: 'bottom-feeder', color: '#cd7f32' };
     if (elo < 1200) return { name: 'Sheep', class: 'sheep', color: '#9e9e9e' };
-    if (elo < 1300) return { name: 'bottom-feeder', class: 'bottom-feeder', color: '#e2c044' };
-    if (elo < 1400) return { name: 'mid', class: 'mid', color: '#8bc8cb' };
-    if (elo < 1500) return { name: 'GOAT', class: 'goat', color: '#9E8EE4' };
-    return { name: 'Cracked AF', class: 'cracked-af', color: '#E91E63' };
+    if (elo < 1300) return { name: 'Mid-Maxxer', class: 'mid-maxxer', color: '#e2c044' };
+    if (elo < 1400) return { name: 'Goated', class: 'goated', color: '#8bc8cb' };
+    if (elo < 1500) return { name: 'Cracked', class: 'cracked', color: '#9E8EE4' };
+    return { name: 'Max-Maxxing', class: 'max-maxxing', color: '#E91E63' };
   }
 
   function updateUI(elo, hist) {
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentRankEl.textContent = rank.name;
 
     // Remove all old rank colors
-    const rankClasses = ['spud', 'chud', 'sheep', 'bottom-feeder', 'mid', 'goat', 'cracked-af'];
+    const rankClasses = ['absolute-chud', 'bottom-feeder', 'sheep', 'mid-maxxer', 'goated', 'cracked', 'max-maxxing'];
     currentScoreEl.classList.remove(...rankClasses);
     currentRankEl.classList.remove(...rankClasses);
 

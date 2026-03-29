@@ -9,13 +9,13 @@
   --bg-light-grey: #D8D8DC;
 
   /* Ranks */
-  --rank-spud: #8b5a2b; /* brown */
-  --rank-chud: #cd7f32; /* bronze */
+  --rank-absolute-chud: #8b5a2b; /* brown */
+  --rank-bottom-feeder: #cd7f32; /* bronze */
   --rank-sheep: #9e9e9e; /* silver */
-  --rank-bottom-feeder: #e2c044; /* gold */
-  --rank-mid: #8bc8cb; /* platinum */
-  --rank-goat: #9E8EE4; /* diamond */
-  --rank-cracked-af: #E91E63; /* master */
+  --rank-mid-maxxer: #e2c044; /* gold */
+  --rank-goated: #8bc8cb; /* platinum */
+  --rank-cracked: #9E8EE4; /* diamond */
+  --rank-max-maxxing: #E91E63; /* master */
 
   /* UI */
   --shadow-bevel: inset 2px 2px 4px rgba(255, 255, 255, 0.7), inset -2px -2px 4px rgba(0, 0, 0, 0.1);
@@ -159,13 +159,13 @@ h1, h2, h3, h4, strong, .active {
 }
 
 /* Dynamic Ranking Colors */
-.rank-color.spud { color: var(--rank-spud); }
-.rank-color.chud { color: var(--rank-chud); }
-.rank-color.sheep { color: var(--rank-sheep); }
+.rank-color.absolute-chud { color: var(--rank-absolute-chud); }
 .rank-color.bottom-feeder { color: var(--rank-bottom-feeder); }
-.rank-color.mid { color: var(--rank-mid); }
-.rank-color.goat { color: var(--rank-goat); }
-.rank-color.cracked-af { color: var(--rank-cracked-af); }
+.rank-color.sheep { color: var(--rank-sheep); }
+.rank-color.mid-maxxer { color: var(--rank-mid-maxxer); }
+.rank-color.goated { color: var(--rank-goated); }
+.rank-color.cracked { color: var(--rank-cracked); }
+.rank-color.max-maxxing { color: var(--rank-max-maxxing); }
 
 /* Rank Badge with Bevel */
 .rank-badge-container {
