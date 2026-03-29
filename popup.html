@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Game Elo</title>
+    <link rel="stylesheet" href="popup.css">
+    <!-- Using Google Font generic link to ensure premium looks -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="extension-container">
+        <!-- Top Navigation Area -->
+        <header class="top-bar">
+            <nav class="tabs">
+                <button class="tab-button active" data-tab="score">Score</button>
+                <button class="tab-button" data-tab="history">History</button>
+                <button class="tab-button" data-tab="settings">Settings</button>
+            </nav>
+            <div class="close-icon" id="closePopup" title="Close" aria-label="Close">
+                <!-- SVG X Icon -->
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            
+            <!-- Tab: Score -->
+            <section id="tab-score" class="tab-content active">
+                <div class="user-header">
+                    <h2 class="user-name">Player</h2>
+                </div>
+                
+                <div class="score-display">
+                    <div class="score-group">
+                        <span class="iq-label">IQ:</span>
+                        <span class="iq-score rank-color" id="currentScore">1200</span>
+                    </div>
+                    <div class="rank-badge-container">
+                        <span class="rank-badge rank-color" id="currentRank">Silver</span>
+                    </div>
+                </div>
+
+                <div class="action-section hidden">
+                    <!-- Analyze logic moved to in-page ChatGPT injection -->
+                </div>
+
+                <div class="graph-container">
+                    <div class="graph-box">
+                        <canvas id="eloGraph" width="300" height="120"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: History -->
+            <section id="tab-history" class="tab-content">
+                <h3 class="section-title">Match History</h3>
+                <div class="history-list" id="historyList">
+                    <!-- Javascript populates this -->
+                    <div class="history-empty">No games played yet.</div>
+                </div>
+            </section>
+
+            <!-- Tab: Settings -->
+            <section id="tab-settings" class="tab-content">
+                <h3 class="section-title">Settings</h3>
+                <div class="form-group">
+                    <label for="apiKey">Groq API Key</label>
+                    <input type="password" id="apiKey" placeholder="gsk_..." spellcheck="false" />
+                </div>
+                <div class="form-group">
+                    <label for="userName">Player Name</label>
+                    <input type="text" id="userName" placeholder="Your Name" />
+                </div>
+                <!-- Developer actions to clear storage -->
+                <button id="saveSettingsBtn" class="primary-btn">Save Settings</button>
+                <button id="resetDataBtn" class="secondary-btn margin-top">Reset All Data</button>
+                <div id="settingsMessage" class="success-msg hidden">Saved successfully.</div>
+            </section>
+
+        </main>
+
+        <footer class="bottom-bar">
+            <a href="https://chatgpt.com/" target="_blank" class="website-link">Play on ChatGPT</a>
+        </footer>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

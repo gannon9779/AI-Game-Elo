@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "AI Game Elo",
+  "version": "1.0",
+  "description": "Analyzes your ChatGPT interactions via Groq to measure your human ingenuity Elo.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://api.groq.com/*",
+    "*://chatgpt.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://chatgpt.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}
